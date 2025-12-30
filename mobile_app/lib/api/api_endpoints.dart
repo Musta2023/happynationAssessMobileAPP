@@ -1,29 +1,7 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart'; // For kIsWeb
-
 class ApiEndpoints {
-  // -------------------------------------------------------------------------
-  // 1. SMART BASE URL (Detects Android vs iOS vs Web)
-  // -------------------------------------------------------------------------
-  static String get baseUrl {
-    if (kIsWeb) {
-      return 'http://127.0.0.1:8000/api'; // Web (Localhost works)
-    } 
-    // Android Emulator requires 10.0.2.2 to see the PC
-    else if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000/api'; 
-    } 
-    // iOS Simulator uses standard localhost
-    else if (Platform.isIOS) {
-      return 'http://127.0.0.1:8000/api'; 
-    }
-    // Fallback
-    return 'http://127.0.0.1:8000/api'; 
-  }
 
-  // NOTE: If you are using a PHYSICAL DEVICE (Real Phone), 
-  // you must hardcode your PC's LAN IP instead, like:
-  // static const String baseUrl = 'http://192.168.1.15:8000/api';
+  // ------------------------------------------------------------------------- // NEW (Railway Production)
+  static const String baseUrl = "https://happynationassessmobileapp-production.up.railway.app/api";
 
   // -------------------------------------------------------------------------
   // 2. ENDPOINTS
