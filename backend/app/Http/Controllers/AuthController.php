@@ -71,4 +71,10 @@ class AuthController extends Controller
         $token = $user->createToken('EmployeeToken')->accessToken;
         return response()->json(['token' => $token], 200);
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
 }

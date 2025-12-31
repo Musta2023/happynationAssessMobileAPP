@@ -12,6 +12,7 @@ class ApiEndpoints {
   static const String login = '/auth/login';
   static const String adminLogin = '/admin/login';
   static const String refresh = '/auth/refresh';
+  static const String logout = '/auth/logout';
 
   // Questions
   static const String questions = '/questions';

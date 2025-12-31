@@ -1,28 +1,27 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/services/auth_service.dart';
 import 'package:mobile_app/routes/app_pages.dart';
 
-/// Middleware to protect routes that require authentication.
-///
-/// FIXED: Now correctly imports and uses the unified `AuthService` instead of
-/// the deleted `AuthController`.
+/// AuthMiddleware: The "Security Guard" of your application
+/// It prevents unauthenticated users from accessing protected Pro UI pagess 
 class AuthMiddleware extends GetMiddleware {
   @override
   int? get priority => 1;
 
   @override
   RouteSettings? redirect(String? route) {
-    // Find the global AuthService instance.
+    // 1. Get the AuthService instance
     final authService = Get.find<AuthService>();
     
-    // If the user is not logged in, redirect to the login page.
+    // 2. Security Check: If the user is NOT logged in, send them to Login
     if (!authService.isLoggedIn) {
+     
+      
       return const RouteSettings(name: Routes.login);
     }
     
-    // Otherwise, allow navigation.
+    // 3. Success: Allow them to see the beautiful Pro UI
     return null;
   }
 }

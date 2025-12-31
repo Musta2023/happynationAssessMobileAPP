@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:mobile_app/api/api_client.dart'; // Import ApiClient
 import 'package:mobile_app/models/user.dart';
 import 'package:mobile_app/routes/app_pages.dart';
 import 'package:mobile_app/services/secure_storage_service.dart';
@@ -8,6 +9,7 @@ import 'package:mobile_app/services/secure_storage_service.dart';
 /// It handles storing and retrieving user data and authentication tokens.
 class AuthService extends GetxService {
   final SecureStorageService _storage = Get.find<SecureStorageService>();
+  final ApiClient _apiClient = Get.find<ApiClient>(); // Get ApiClient instance
 
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'auth_user';
@@ -57,6 +59,14 @@ class AuthService extends GetxService {
 
   /// Logs out the user by clearing all authentication data.
   Future<void> logout() async {
+    try {
+      // Attempt to revoke the token on the backend
+      await _apiClient.logout();
+    } catch (e) {
+      // Log the error but proceed with local logout
+      Get.log('Error revoking token on backend: $e');
+    }
+
     _token = null;
     _user = null;
     await _storage.delete(_tokenKey);

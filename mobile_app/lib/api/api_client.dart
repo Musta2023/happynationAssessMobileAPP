@@ -123,6 +123,10 @@ class ApiClient extends GetxService {
     );
   }
 
+  Future<Response> logout() {
+    return _dio.post(ApiEndpoints.logout);
+  }
+
   // ===============================
   // EMPLOYEE
   // ===============================

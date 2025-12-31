@@ -5,12 +5,31 @@ import 'package:fl_chart/fl_chart.dart';
 class CategoryScoresBarChart extends StatelessWidget {
   final Map<String, double> categoryScores;
 
+  static const double _chartAspectRatio = 1.7;
+  static const double _maxScore = 100.0;
+  static const double _barWidth = 20;
+  static const double _barRadiusValue = 4;
+  static const double _highScoreThreshold = 75.0;
+  static const double _mediumScoreThreshold = 50.0;
+  static const double _alphaValue = 0.3;
+  static const double _reservedSize = 30;
+  static const double _intervalValue = 20;
+  static const double _leftTitlesReservedSize = 30;
+  static const double _bottomSpacing = 8;
+  static const double _gridAlpha = 0.1;
+  static const double _gridStrokeWidth = 1;
+  static const double _bottomTitlesFontSize = 11.0;
+  static const double _leftTitlesFontSize = 10.0;
+  static const bool _showGridData = true;
+  static const bool _showGridBorder = false;
+  static const bool _drawVerticalLine = false;
+
   const CategoryScoresBarChart({super.key, required this.categoryScores});
 
   @override
   Widget build(BuildContext context) {
     final categories = categoryScores.keys.toList();
-    
+
     // Generate Bar Groups
     List<BarChartGroupData> barGroups = List.generate(categories.length, (i) {
       final score = categoryScores[categories[i]] ?? 0.0;
@@ -20,13 +39,17 @@ class CategoryScoresBarChart extends StatelessWidget {
           BarChartRodData(
             toY: score,
             // Executive Design: Dynamic professional colors
-            color: _getScoreColor(score, context), 
-            width: 20,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+            color: _getScoreColor(score, context),
+            width: _barWidth,
+            borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(_barRadiusValue)),
             backDrawRodData: BackgroundBarChartRodData(
               show: true,
-              toY: 100.0,
-              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              toY: _maxScore,
+              color: Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerHighest
+                  .withValues(alpha: _alphaValue),
             ),
           ),
         ],
@@ -34,10 +57,10 @@ class CategoryScoresBarChart extends StatelessWidget {
     });
 
     return AspectRatio(
-      aspectRatio: 1.7,
+      aspectRatio: _chartAspectRatio,
       child: BarChart(
         BarChartData(
-          maxY: 100.0,
+          maxY: _maxScore,
           barGroups: barGroups,
           alignment: BarChartAlignment.spaceAround,
           barTouchData: BarTouchData(
@@ -47,11 +70,13 @@ class CategoryScoresBarChart extends StatelessWidget {
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 return BarTooltipItem(
                   '${categories[group.x]}\n',
-                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                   children: [
                     TextSpan(
                       text: rod.toY.toStringAsFixed(1),
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w500),
                     ),
                   ],
                 );
@@ -60,25 +85,29 @@ class CategoryScoresBarChart extends StatelessWidget {
           ),
           titlesData: FlTitlesData(
             show: true,
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 30,
+                reservedSize: _reservedSize,
                 getTitlesWidget: (double value, TitleMeta meta) {
                   final index = value.toInt();
-                  if (index < 0 || index >= categories.length) return const SizedBox();
-                  
+                  if (index < 0 || index >= categories.length) {
+                    return const SizedBox();
+                  }
+
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
-                    space: 8,
+                    space: _bottomSpacing,
                     child: Text(
                       categories[index],
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.outline,
                         fontWeight: FontWeight.w600,
-                        fontSize: 11,
+                        fontSize: _bottomTitlesFontSize,
                       ),
                     ),
                   );
@@ -88,17 +117,17 @@ class CategoryScoresBarChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 30,
-                interval: 20,
+                reservedSize: _leftTitlesReservedSize,
+                interval: _intervalValue,
                 getTitlesWidget: (value, meta) {
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
-                    space: 8,
+                    space: _bottomSpacing,
                     child: Text(
                       value.toInt().toString(),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.outline,
-                        fontSize: 10,
+                        fontSize: _leftTitlesFontSize,
                       ),
                     ),
                   );
@@ -107,23 +136,26 @@ class CategoryScoresBarChart extends StatelessWidget {
             ),
           ),
           gridData: FlGridData(
-            show: true,
-            drawVerticalLine: false,
-            horizontalInterval: 20,
+            show: _showGridData,
+            drawVerticalLine: _drawVerticalLine,
+            horizontalInterval: _intervalValue,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
-              strokeWidth: 1,
+              color:
+                  Theme.of(context).dividerColor.withValues(alpha: _gridAlpha),
+              strokeWidth: _gridStrokeWidth,
             ),
           ),
-          borderData: FlBorderData(show: false),
+          borderData: FlBorderData(show: _showGridBorder),
         ),
       ),
     );
   }
 
   Color _getScoreColor(double score, BuildContext context) {
-    if (score >= 75.0) return Colors.teal;
-    if (score >= 50.0) return Theme.of(context).colorScheme.primary;
+    if (score >= _highScoreThreshold) return Colors.teal;
+    if (score >= _mediumScoreThreshold) {
+      return Theme.of(context).colorScheme.primary;
+    }
     return Colors.orange;
   }
 }

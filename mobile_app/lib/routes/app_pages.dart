@@ -1,163 +1,134 @@
-import 'package:get/get.dart'; // Essential GetX imports
-import 'package:mobile_app/pages/admin/admin_all_responses_page.dart';
-import 'package:mobile_app/pages/admin/admin_home_page.dart';
-import 'package:mobile_app/routes/role_middleware.dart'; // For RoleMiddleware
-import 'package:mobile_app/pages/questionnaire/questionnaire_page.dart'; // For QuestionnairePage
-// For AdminDashboardPage
-import 'package:mobile_app/admin/pages/users/user_list_page.dart'; // For AdminUserListPage
-
-// Core user-facing pages
+import 'package:get/get.dart';
+// Core Auth Pages
 import '../pages/auth/login_screen.dart';
 import '../pages/auth/register_screen.dart';
-import 'package:mobile_app/pages/results/results_page.dart';
 
-// Employee specific pages
+// Employee / User Facing Pages
 import 'package:mobile_app/pages/employee/employee_main_screen.dart';
 import 'package:mobile_app/pages/employee/history_page.dart';
 import 'package:mobile_app/pages/employee/profile_page.dart';
 import 'package:mobile_app/pages/employee/history_detail_page.dart';
+import 'package:mobile_app/pages/questionnaire/questionnaire_page.dart';
+import 'package:mobile_app/pages/results/results_page.dart';
 
-import 'package:mobile_app/admin/pages/questions/question_edit_page.dart';
-import 'package:mobile_app/admin/pages/responses/response_detail_page.dart';
-import 'package:mobile_app/admin/pages/questions/question_list_page.dart';
+// Admin Pages
 import 'package:mobile_app/pages/admin/admin_login_page.dart';
+import 'package:mobile_app/pages/admin/admin_home_page.dart';
+import 'package:mobile_app/pages/admin/admin_all_responses_page.dart';
+import 'package:mobile_app/pages/admin/admin_response_detail_page.dart';
+import 'package:mobile_app/pages/admin/admin_user_list_page.dart';
+import 'package:mobile_app/pages/admin/admin_question_list_page.dart';
 import 'package:mobile_app/pages/admin/admin_assessment_list_page.dart';
+import 'package:mobile_app/admin/pages/questions/question_edit_page.dart';
+
+// Middlewares
 import 'auth_middleware.dart';
+import 'package:mobile_app/routes/role_middleware.dart';
 
 part 'app_routes.dart';
 
-/// Defines the application's pages and their bindings with routes.
-///
-/// This class is used by `GetMaterialApp` to configure the app's navigation.
 class AppPages {
-  /// The initial route to be loaded when the app starts.
-  ///
-  /// Note: The actual initial route is dynamically determined in `main.dart`
-  /// based on the authentication state. This serves as a fallback.
   static const initial = Routes.login;
 
-  /// A list of all pages in the application.
-  ///
-  /// Each [GetPage] maps a route name to a page widget and can specify
-  /// bindings, middlewares, and transitions.
   static final routes = [
+    // --- AUTHENTICATION ---
     GetPage(
       name: Routes.login,
       page: () => const LoginScreen(),
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: Routes.register,
       page: () => const RegistrationScreen(),
-      // Uses a slide-in transition from the bottom.
-      transition: Transition.downToUp,
+      transition: Transition.rightToLeftWithFade,
     ),
     GetPage(
-      name: Routes.adminLogin, // New: Admin Login Page
+      name: Routes.adminLogin,
       page: () => AdminLoginPage(),
+      transition: Transition.cupertino,
     ),
-    // Removed: GetPage for Routes.home as it's being replaced by employeeMain and adminDashboard
+
+    // --- EMPLOYEE SECTION ---
     GetPage(
-      name: Routes.employeeMain, // New: Employee Main Screen
+      name: Routes.employeeMain,
       page: () => EmployeeMainScreen(),
+      binding: BindingsBuilder(() {
+        // You can add controllers here if you don't want to Put them in the UI
+      }),
       middlewares: [
-        AuthMiddleware(), // Should always be protected
-        RoleMiddleware('employee'), // Only employees can access this
+        AuthMiddleware(),
+        RoleMiddleware('employee'),
       ],
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: Routes.questionnaire,
-      page: () => QuestionnairePage(),
+      // We pass the assessmentId via Get.arguments inside the Page/Controller
+      page: () => QuestionnairePage(assessmentId: Get.arguments), 
       middlewares: [
         AuthMiddleware(),
         RoleMiddleware('employee'),
       ],
+      transition: Transition.rightToLeft,
     ),
     GetPage(
       name: Routes.results,
-      page: () => ResultsPage(), // Assuming a ResultsPage exists
-      middlewares: [
-        AuthMiddleware(), // Results page should also be protected by auth
-      ],
+      page: () => const ResultsPage(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
-      name: Routes.history, // New: History Page
+      name: Routes.history,
       page: () => const HistoryPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('employee'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('employee')],
     ),
     GetPage(
-      name: Routes.historyDetail, // New: History Detail Page
+      name: Routes.historyDetail,
       page: () => HistoryDetailPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('employee'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('employee')],
+      transition: Transition.rightToLeftWithFade,
     ),
     GetPage(
-      name: Routes.profile, // New: Profile Page
+      name: Routes.profile,
       page: () => const ProfilePage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('employee'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('employee')],
     ),
+
+    // --- ADMIN SECTION ---
     GetPage(
       name: Routes.adminDashboard,
       page: () => const AdminHomePage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: Routes.adminQuestions,
-      page: () => AdminQuestionListPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      page: () => const AdminQuestionListPage(),
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
     ),
     GetPage(
       name: Routes.adminResponses,
       page: () => const AdminAllResponsesPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
     ),
     GetPage(
       name: Routes.adminResponseDetail,
-      page: () => const AdminResponseDetailPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      page: () => AdminResponseDetailPage(),
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
     ),
     GetPage(
       name: Routes.adminQuestionEdit,
       page: () => QuestionEditPage(question: Get.arguments),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
     ),
     GetPage(
       name: Routes.adminUsers,
       page: () => const AdminUserListPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
     ),
     GetPage(
       name: Routes.adminAssessments,
       page: () => const AdminAssessmentListPage(),
-      middlewares: [
-        AuthMiddleware(),
-        RoleMiddleware('admin'),
-      ],
+      middlewares: [AuthMiddleware(), RoleMiddleware('admin')],
     ),
   ];
 }

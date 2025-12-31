@@ -4,7 +4,7 @@ import 'package:mobile_app/models/analysis_result.dart';
 import 'package:mobile_app/main.dart'; // Import AppColors
 
 class ResultsPage extends StatelessWidget {
-  ResultsPage({super.key});
+  const ResultsPage({super.key});
 
   Color _riskColor(String risk) {
     switch (risk.toLowerCase()) {
