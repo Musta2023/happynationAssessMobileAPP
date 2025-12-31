@@ -158,4 +158,14 @@ class ResponseController extends Controller
             Log::error('Exception during Google Gemini API call', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             throw $e; // Re-throw to be caught by the calling method
         }
-    }}
+    }
+
+    public function history()
+    {
+        $user = Auth::user();
+        return Response::where('user_id', $user->id)
+            ->with('assessment') // Eager load the associated assessment
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+}
