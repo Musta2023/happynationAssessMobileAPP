@@ -127,6 +127,10 @@ class ApiClient extends GetxService {
     return _dio.post(ApiEndpoints.logout);
   }
 
+  Future<Response> getResponsesHistory() {
+    return _dio.get(ApiEndpoints.history);
+  }
+
   // ===============================
   // EMPLOYEE
   // ===============================

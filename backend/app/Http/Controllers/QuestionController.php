@@ -22,7 +22,17 @@ class QuestionController extends Controller
 
     public function getAssessments()
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
         $assessments = Assessment::with('questions')->get();
+
+        $assessments->each(function ($assessment) use ($user) {
+            $assessment->is_answered = $user->responses()->where('assessment_id', $assessment->id)->exists();
+        });
+
         return response()->json($assessments);
     }
 }

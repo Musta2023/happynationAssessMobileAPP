@@ -1,34 +1,33 @@
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:mobile_app/api/api_client.dart';
-import 'package:mobile_app/api/api_endpoints.dart';
-import 'package:mobile_app/models/analysis_result.dart'; // Assuming AnalysisResult can also represent history items
+import 'package:mobile_app/models/employee_response.dart'; // Import the new EmployeeResponse model
 
 class HistoryController extends GetxController {
   final ApiClient _apiClient = Get.find<ApiClient>();
 
+  var responses = <EmployeeResponse>[].obs;
   var isLoading = true.obs;
-  var historyList = <AnalysisResult>[].obs; // Assuming history items are AnalysisResult-like
 
   @override
   void onInit() {
-    fetchHistory();
+    fetchResponsesHistory();
     super.onInit();
   }
 
-  Future<void> fetchHistory() async {
+  Future<void> fetchResponsesHistory() async {
     try {
       isLoading.value = true;
-      final response = await _apiClient.dio.get(ApiEndpoints.history);
+      final response = await _apiClient.getResponsesHistory();
       if (response.statusCode == 200) {
-        historyList.value = (response.data as List)
-            .map((item) => AnalysisResult.fromJson(item)) // Assuming history items are AnalysisResult-like
+        responses.value = (response.data as List)
+            .map((item) => EmployeeResponse.fromJson(item))
             .toList();
       } else {
-        Get.snackbar('Error', 'Failed to fetch history. Status: ${response.statusCode}');
+        Get.snackbar('Error', 'Failed to fetch history: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      Get.snackbar('Error', e.response?.data['message'] ?? 'Failed to fetch history');
+      Get.snackbar('Error', e.response?.data['message'] ?? 'Failed to fetch history.');
     } finally {
       isLoading.value = false;
     }

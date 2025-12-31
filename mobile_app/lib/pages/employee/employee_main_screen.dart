@@ -84,7 +84,7 @@ class EmployeeMainScreen extends StatelessWidget {
               index: controller.selectedIndex.value,
               children: [
                 EmployeeAssessmentsPage(),
-                const HistoryPage(),
+                HistoryPage(),
                 const ProfilePage(),
               ],
             ),

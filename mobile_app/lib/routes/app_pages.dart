@@ -78,7 +78,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.history,
-      page: () => const HistoryPage(),
+      page: () => HistoryPage(),
       middlewares: [AuthMiddleware(), RoleMiddleware('employee')],
     ),
     GetPage(

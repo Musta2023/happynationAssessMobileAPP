@@ -1,43 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; 
 import 'package:mobile_app/controllers/history_controller.dart';
-import 'package:mobile_app/routes/app_pages.dart';
-import 'package:mobile_app/main.dart'; // Import AppColors
+import 'package:intl/intl.dart'; // For date formatting
 
 class HistoryPage extends StatelessWidget {
-  const HistoryPage({super.key});
+  final HistoryController _controller = Get.put(HistoryController());
+
+  HistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Ensure controller is initialized
-    final HistoryController controller = Get.put(HistoryController());
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // Professional light background
+      appBar: AppBar(
+        title: const Text('My Assessment History'),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        centerTitle: false,
+      ),
       body: Obx(() {
-        if (controller.isLoading.value) {
+        if (_controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(strokeWidth: 3),
           );
         }
 
-        if (controller.historyList.isEmpty) {
+        if (_controller.responses.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.history_toggle_off_rounded, size: 80, color: Colors.grey[300]),
+                Icon(Icons.history_toggle_off, size: 80, color: Colors.grey[300]),
                 const SizedBox(height: 16),
                 Text(
-                  'No submission history found.',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 16, fontWeight: FontWeight.w500),
+                  'No completed assessments yet.',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Your assessment results will appear here.',
-                  style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                  'Complete assessments to see your history here.',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -45,123 +49,60 @@ class HistoryPage extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () async => controller.fetchHistory(), // Assuming this method exists
+          onRefresh: () async => _controller.fetchResponsesHistory(),
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            itemCount: controller.historyList.length,
+            itemCount: _controller.responses.length,
             itemBuilder: (context, index) {
-              final history = controller.historyList[index];
-              
-              // Formatting the date nicely: e.g., "Oct 12, 2025"
-              
-              // Formatting the time: e.g., "14:30"
-              final timeStr = history.createdAt != null 
-                  ? DateFormat('HH:mm').format(history.createdAt!) 
-                  : '';
+              final response = _controller.responses[index];
+              final assessmentTitle = response.assessment?.title ?? 'Unknown Assessment';
+              final formattedDate = DateFormat('MMM d, yyyy HH:mm').format(response.createdAt);
 
-              return Container(
+              return Card(
                 margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: InkWell(
-                    onTap: () => Get.toNamed(Routes.historyDetail, arguments: history),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          // 1. Date Circle Section
-                          Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  history.createdAt != null ? DateFormat('dd').format(history.createdAt!) : '?',
-                                  style: TextStyle(
-                                    fontSize: 20, 
-                                    fontWeight: FontWeight.bold, 
-                                    color: theme.colorScheme.primary
-                                  ),
-                                ),
-                                Text(
-                                  history.createdAt != null ? DateFormat('MMM').format(history.createdAt!).toUpperCase() : 'N/A',
-                                  style: TextStyle(
-                                    fontSize: 10, 
-                                    fontWeight: FontWeight.w800, 
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.7)
-                                  ),
-                                ),
-                              ],
-                            ),
+                child: InkWell(
+                  onTap: () {
+                    // TODO: Navigate to Response Detail Page (Part of future task)
+                    // Get.toNamed(Routes.responseDetail, arguments: response);
+                    Get.snackbar(
+                      'Details',
+                      'Tap to view details for "$assessmentTitle" - will be implemented soon!',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          assessmentTitle,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
                           ),
-                          const SizedBox(width: 16),
-                          
-                          // 2. Middle Info Section
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Well-being Assessment",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.dark,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(Icons.access_time, size: 14, color: Colors.grey[400]),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "Submitted at $timeStr",
-                                      style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Completed On: $formattedDate',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
                           ),
-                          
-                          // 3. Score/Arrow Section
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // If your history object has a score, display it here
-                              // Text("${history.globalScore}%", style: ...), 
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[50],
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.arrow_forward_ios_rounded, 
-                                  size: 14, 
-                                  color: AppColors.secondary
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildScoreChip('Global Score', response.globalScore, theme),
+                            _buildScoreChip('Risk Level', response.risk, theme, isRisk: true),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -170,6 +111,47 @@ class HistoryPage extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildScoreChip(String label, dynamic value, ThemeData theme, {bool isRisk = false}) {
+    Color chipColor;
+    Color textColor = Colors.white;
+
+    if (isRisk) {
+      switch (value.toLowerCase()) {
+        case 'low':
+          chipColor = Colors.green;
+          break;
+        case 'medium':
+          chipColor = Colors.orange;
+          break;
+        case 'high':
+          chipColor = Colors.red;
+          break;
+        default:
+          chipColor = Colors.grey;
+          break;
+      }
+    } else {
+      // For scores, a simple gradient or fixed color based on value (e.g., higher is better)
+      if (value >= 70) {
+        chipColor = Colors.green;
+      } else if (value >= 40) {
+        chipColor = Colors.orange;
+      } else {
+        chipColor = Colors.red;
+      }
+    }
+
+    return Chip(
+      label: Text(
+        '$label: ${value.toString()}',
+        style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: chipColor,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 }
