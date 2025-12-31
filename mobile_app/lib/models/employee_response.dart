@@ -1,3 +1,4 @@
+import 'dart:convert'; // Import for jsonDecode
 import 'package:mobile_app/models/assessment.dart';
 
 class EmployeeResponse {
@@ -44,7 +45,7 @@ class EmployeeResponse {
       satisfactionScore: json['satisfaction_score'] ?? 0,
       globalScore: json['global_score'] ?? 0,
       risk: json['risk'] ?? 'low',
-      recommendations: (json['recommendations'] as List<dynamic>?)
+      recommendations: (jsonDecode(json['recommendations']) as List<dynamic>?) // Decode JSON string
               ?.map((e) => e.toString())
               .toList() ??
           [],
