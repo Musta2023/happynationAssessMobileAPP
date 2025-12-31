@@ -51,8 +51,13 @@ Future<void> main() async {
   // Initialize and register all services for global access.
   // The order matters if services depend on each other.
   await Get.putAsync(() async => SecureStorageService());
+  // AuthService needs SecureStorageService, so put it after
   await Get.putAsync(() async => AuthService().init());
-  await Get.putAsync(() async => ApiClient());
+  // ApiClient needs AuthService, but AuthService's constructor (before .init()) doesn't directly use ApiClient
+  // ApiClient's _authService is Get.find<AuthService>() which requires AuthService to be available.
+  // So, ApiClient must be registered *after* AuthService.
+  // Using Get.lazyPut for ApiClient means it's only instantiated when first 'find'ed.
+  Get.lazyPut(() => ApiClient()); 
   await Get.putAsync(() async => UserService());
 
   // Removed AdminResponseService as its functions are now integrated into AdminDashboardController
