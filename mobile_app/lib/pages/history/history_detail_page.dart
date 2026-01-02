@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:mobile_app/models/response_history.dart';
@@ -16,6 +17,10 @@ class HistoryDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('History Details'),
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

@@ -3,7 +3,7 @@ class Assessment {
   final String title;
   final String? description;
   final List<String> questionIds; // List of question IDs belonging to this assessment
-  final bool? isAnswered;
+  bool? isAnswered;
 
   Assessment({
     required this.id,

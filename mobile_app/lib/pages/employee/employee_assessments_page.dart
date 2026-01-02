@@ -13,12 +13,10 @@ class EmployeeAssessmentsPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // Matches Main Screen background
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Obx(() {
         if (_controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 3),
-          );
+          return const Center(child: CircularProgressIndicator(strokeWidth: 3));
         }
 
         if (_controller.assessments.isEmpty) {
@@ -28,10 +26,7 @@ class EmployeeAssessmentsPage extends StatelessWidget {
               children: [
                 Icon(Icons.assignment_turned_in_outlined, size: 80, color: Colors.grey[300]),
                 const SizedBox(height: 16),
-                Text(
-                  'No assessments available.',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                ),
+                Text('No assessments available.', style: TextStyle(color: Colors.grey[600], fontSize: 16)),
               ],
             ),
           );
@@ -44,7 +39,8 @@ class EmployeeAssessmentsPage extends StatelessWidget {
             itemCount: _controller.assessments.length,
             itemBuilder: (context, index) {
               final assessment = _controller.assessments[index];
-              final isAnswered = assessment.isAnswered ?? false;
+              // Check if it's answered
+              final bool isAnswered = assessment.isAnswered ?? false;
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -62,8 +58,9 @@ class EmployeeAssessmentsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: InkWell(
+                    // If answered, clicking does nothing (or you could show a "Completed" message)
                     onTap: isAnswered 
-                        ? null 
+                        ? () => Get.snackbar("Status", "You have already completed this assessment.") 
                         : () => Get.to(() => QuestionnairePage(assessmentId: assessment.id)),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
@@ -80,7 +77,7 @@ class EmployeeAssessmentsPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Icon(
-                              isAnswered ? Icons.check_rounded : Icons.pending_actions_rounded,
+                              isAnswered ? Icons.task_alt_rounded : Icons.pending_actions_rounded,
                               color: isAnswered ? Colors.green : theme.colorScheme.primary,
                               size: 28,
                             ),
@@ -94,15 +91,16 @@ class EmployeeAssessmentsPage extends StatelessWidget {
                               children: [
                                 Text(
                                   assessment.title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1A202C),
+                                    color: const Color(0xFF1A202C),
+                                    decoration: isAnswered ? TextDecoration.none : null,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  assessment.description ?? 'Tap to start this assessment',
+                                  isAnswered ? "Assessment completed" : (assessment.description ?? 'Tap to start'),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -117,7 +115,7 @@ class EmployeeAssessmentsPage extends StatelessWidget {
                           
                           // 3. Status Badge Section
                           const SizedBox(width: 8),
-                          _buildStatusBadge(isAnswered, theme),
+                          _buildStatusBadge(isAnswered),
                         ],
                       ),
                     ),
@@ -131,17 +129,36 @@ class EmployeeAssessmentsPage extends StatelessWidget {
     );
   }
 
-  // Helper Widget for the Status Badge
-  Widget _buildStatusBadge(bool isAnswered, ThemeData theme) {
+  // UPDATED: Better Status Badge with labels
+  Widget _buildStatusBadge(bool isAnswered) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isAnswered ? Colors.green.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
+        color: isAnswered ? Colors.green.withValues(alpha:0.1) : Colors.orange.withValues(alpha:0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isAnswered ? Colors.green.withValues(alpha: 0.3) : Colors.orange.withValues(alpha: 0.3),
+        ),
       ),
-      child: isAnswered 
-        ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
-        : Icon(Icons.arrow_forward_ios_rounded, color: theme.colorScheme.primary, size: 14),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isAnswered ? Icons.check_circle_outline : Icons.schedule,
+            size: 14,
+            color: isAnswered ? Colors.green : Colors.orange,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            isAnswered ? "Answered" : "Open",
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: isAnswered ? Colors.green : Colors.orange,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

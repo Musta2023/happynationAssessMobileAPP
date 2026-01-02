@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_questions_controller.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/question.dart';
 import 'package:mobile_app/widgets/shared/no_data_found_widget.dart';
 import 'package:mobile_app/pages/admin/admin_question_form_page.dart'; // Import AdminQuestionFormPage
@@ -29,6 +30,10 @@ class _AdminQuestionListPageState extends ConsumerState<AdminQuestionListPage> {
       appBar: AppBar(
         title: const Text('Manage Questions'),
         elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

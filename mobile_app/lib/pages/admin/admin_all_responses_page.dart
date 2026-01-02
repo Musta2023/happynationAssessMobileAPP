@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_all_responses_controller.dart';
 import 'package:mobile_app/models/admin_dashboard_models.dart';
 import 'package:mobile_app/widgets/admin/response_list_item.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
 
@@ -60,10 +61,9 @@ class _AdminAllResponsesPageState extends ConsumerState<AdminAllResponsesPage> {
         'Response Analytics',
         style: TextStyle(color: AppColors.textMain, fontWeight: FontWeight.bold, fontSize: 18),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textMain),
-        onPressed: () => Navigator.pop(context),
-      ),
+      actions: const [
+        BackAndHomeButtons(),
+      ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
         child: Container(color: AppColors.border, height: 1),

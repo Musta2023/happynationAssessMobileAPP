@@ -13,12 +13,6 @@ class HistoryPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Assessment History'),
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        foregroundColor: theme.appBarTheme.foregroundColor,
-        centerTitle: false,
-      ),
       body: Obx(() {
         if (_controller.isLoading.value) {
           return const Center(

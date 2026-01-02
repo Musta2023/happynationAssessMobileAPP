@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/analysis_result.dart';
 import 'package:mobile_app/main.dart'; // Import AppColors
 
@@ -34,6 +35,10 @@ class HistoryDetailPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),

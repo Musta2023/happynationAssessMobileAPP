@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/models/admin_dashboard_models.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/main.dart'; // Import AppColors
 
 class AdminResponseDetailPage extends StatelessWidget {
@@ -26,6 +27,10 @@ class AdminResponseDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Assessment Details'),
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_questions_controller.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/question.dart';
 
 class AppColors {
@@ -119,10 +120,10 @@ class _AdminQuestionFormPageState extends ConsumerState<AdminQuestionFormPage> {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 1,
-      leading: IconButton(
-        icon: const Icon(Icons.close, color: AppColors.textMain),
-        onPressed: () => Navigator.pop(context),
-      ),
+      automaticallyImplyLeading: false,
+      actions: const [
+        BackAndHomeButtons(),
+      ],
       title: Text(
         widget.question == null ? 'New Question' : 'Edit Question',
         style: const TextStyle(color: AppColors.textMain, fontWeight: FontWeight.bold, fontSize: 18),

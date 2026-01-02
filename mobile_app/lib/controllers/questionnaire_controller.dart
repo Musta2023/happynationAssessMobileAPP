@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:mobile_app/api/api_client.dart';
+import 'package:mobile_app/controllers/employee_assessments_controller.dart';
 import 'package:mobile_app/api/api_endpoints.dart';
 import 'package:mobile_app/models/question.dart';
+import 'package:mobile_app/models/assessment.dart';
 import 'package:mobile_app/routes/app_pages.dart';
 
 class QuestionnaireController extends GetxController {
@@ -61,6 +63,21 @@ class QuestionnaireController extends GetxController {
 
   /// Submits all collected answers to the server.
   Future<void> submitAnswers() async {
+    // Second request: Check if the assessment is already answered.
+    final EmployeeAssessmentsController assessmentsController = Get.find<EmployeeAssessmentsController>();
+    final Assessment? currentAssessment = assessmentsController.assessments.firstWhereOrNull(
+      (a) => a.id == assessmentId,
+    );
+
+    if (currentAssessment != null && currentAssessment.isAnswered == true) {
+      Get.snackbar(
+        'Already Submitted',
+        'You have already completed this assessment.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return; // Stop the submission
+    }
+
     try {
       isLoading.value = true;
       final formattedAnswers = userAnswers.entries

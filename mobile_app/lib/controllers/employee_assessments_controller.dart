@@ -18,11 +18,23 @@ class EmployeeAssessmentsController extends GetxController {
   Future<void> fetchAssessments() async {
     try {
       isLoading.value = true;
-      // This method does not exist yet in ApiClient, I will add it.
-      final response = await _apiClient.getEmployeeAssessments();
-      assessments.value = (response.data as List)
+      final assessmentResponse = await _apiClient.getEmployeeAssessments();
+      var assessmentsList = (assessmentResponse.data as List)
           .map((item) => Assessment.fromJson(item))
           .toList();
+
+      // 2. Fetch user's history
+      final historyResponse = await _apiClient.getResponsesHistory();
+      // Assuming historyResponse.data is a List<dynamic> where each item has an 'assessment_id'
+      var historyList = historyResponse.data as List<dynamic>;
+      
+      // 3. Mark assessments as answered if their ID exists in history
+      for (var assessment in assessmentsList) {
+        bool alreadyDone = historyList.any((response) => response['assessment_id'] == assessment.id);
+        assessment.isAnswered = alreadyDone;
+      }
+
+      assessments.assignAll(assessmentsList);
     } on DioException catch (e) {
       Get.snackbar('Error', e.response?.data['message'] ?? 'Failed to fetch assessments');
     } finally {

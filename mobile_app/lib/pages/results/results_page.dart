@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/models/analysis_result.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/main.dart'; // Import AppColors
-import 'package:mobile_app/routes/app_pages.dart'; // Import AppPages to get Routes
+// Import AppPages to get Routes
 
 class ResultsPage extends StatelessWidget {
   const ResultsPage({super.key});
@@ -27,6 +28,10 @@ class ResultsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Assessment Results'),
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -74,26 +79,6 @@ class ResultsPage extends StatelessWidget {
             const SizedBox(height: 16),
             const Text('Recommendations', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ...result.recommendations.map((rec) => Card(child: ListTile(title: Text(rec)))),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.offAllNamed(Routes.employeeMain); // Go back to the main employee home
-                },
-                child: const Text('Go to Home'),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () {
-                  Get.offNamed(Routes.history); // Go to assessment history
-                },
-                child: const Text('View History'),
-              ),
-            ),
             const SizedBox(height: 32),
           ],
         ),

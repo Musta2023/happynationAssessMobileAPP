@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_assessments_controller.dart';
 import 'package:mobile_app/controllers/admin_questions_controller.dart'; // To select questions
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/assessment.dart';
 import 'package:mobile_app/models/question.dart';
 
@@ -207,6 +208,10 @@ class _AdminAssessmentFormPageState extends ConsumerState<AdminAssessmentFormPag
       appBar: AppBar(
         title: Text(widget.assessment == null ? 'Create New Assessment' : 'Edit Assessment'),
         elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

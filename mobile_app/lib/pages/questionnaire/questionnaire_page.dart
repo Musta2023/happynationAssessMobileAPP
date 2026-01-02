@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/controllers/questionnaire_controller.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/widgets/likert_scale_widget.dart';
 import 'package:mobile_app/widgets/text_input_widget.dart';
 import 'package:mobile_app/widgets/yes_no_widget.dart';
@@ -26,11 +27,10 @@ class QuestionnairePage extends StatelessWidget {
         elevation: 0,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
-        // Optional: Add a close button if the user wants to exit
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Get.back(),
-        ),
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: Obx(() {
         if (_controller.isLoading.value && _controller.questions.isEmpty) {

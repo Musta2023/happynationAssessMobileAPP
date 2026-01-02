@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_users_controller.dart'; // To create/update users
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/user.dart';
 
 class AdminUserFormPage extends ConsumerStatefulWidget {
@@ -90,6 +91,10 @@ class _AdminUserFormPageState extends ConsumerState<AdminUserFormPage> {
       appBar: AppBar(
         title: Text(widget.user == null ? 'Create New User' : 'Edit User'),
         elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

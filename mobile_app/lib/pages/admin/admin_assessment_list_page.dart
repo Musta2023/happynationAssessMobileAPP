@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_assessments_controller.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/pages/admin/admin_assessment_form_page.dart';
 import 'package:mobile_app/pages/admin/admin_assessment_analytics_page.dart';
 
@@ -27,6 +28,10 @@ class _AdminAssessmentListPageState extends ConsumerState<AdminAssessmentListPag
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manage Assessments'),
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(),
+        ],
       ),
       body: adminAssessmentsState.isLoading
           ? const Center(child: CircularProgressIndicator())

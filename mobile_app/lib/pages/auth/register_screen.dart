@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/api/api_client.dart';
 import 'package:mobile_app/models/user.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/services/auth_service.dart';
 import 'package:mobile_app/main.dart'; // Import AppColors
 import 'validators.dart';
@@ -94,7 +95,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
+      appBar: AppBar(
+        title: const Text("Register"),
+        automaticallyImplyLeading: false,
+        actions: const [
+          BackAndHomeButtons(showHomeButton: false),
+        ],
+      ),
       body: Obx(() {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),

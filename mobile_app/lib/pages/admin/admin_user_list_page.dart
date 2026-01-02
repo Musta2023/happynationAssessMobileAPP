@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/admin_users_controller.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/user.dart';
 import 'package:mobile_app/widgets/shared/no_data_found_widget.dart';
 import 'package:get/get.dart';
@@ -58,6 +59,10 @@ class _AdminUserListPageState extends ConsumerState<AdminUserListPage> {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 1,
+      automaticallyImplyLeading: false,
+      actions: const [
+        BackAndHomeButtons(),
+      ],
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

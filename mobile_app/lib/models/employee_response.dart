@@ -1,11 +1,11 @@
-import 'dart:convert'; // Import for jsonDecode
+import 'dart:convert';// For jsonDecode       
 import 'package:mobile_app/models/assessment.dart';
 
 class EmployeeResponse {
   final int id;
   final int userId;
   final int? assessmentId;
-  final Assessment? assessment; // Eager loaded assessment
+  Assessment? assessment; 
   final int stressScore;
   final int motivationScore;
   final int satisfactionScore;
@@ -33,6 +33,35 @@ class EmployeeResponse {
   });
 
   factory EmployeeResponse.fromJson(Map<String, dynamic> json) {
+    // Helper function to handle the recommendations field safely
+    List<String> parseRecommendations(dynamic data) {
+      if (data == null) return [];
+      
+      // Case 1: It's already a List (What we expect)
+      if (data is List) {
+        return data.map((e) => e.toString()).toList();
+      }
+      
+      // Case 2: It's a JSON String that needs decoding (common in PHP/Laravel)
+      if (data is String && data.startsWith('[')) {
+        try {
+          final decoded = jsonDecode(data);
+          if (decoded is List) {
+            return decoded.map((e) => e.toString()).toList();
+          }
+        } catch (e) {
+          return [];
+        }
+      }
+
+      // Case 3: It's just a regular string
+      if (data is String && data.isNotEmpty) {
+        return [data];
+      }
+
+      return [];
+    }
+
     return EmployeeResponse(
       id: json['id'],
       userId: json['user_id'],
@@ -45,31 +74,12 @@ class EmployeeResponse {
       satisfactionScore: json['satisfaction_score'] ?? 0,
       globalScore: json['global_score'] ?? 0,
       risk: json['risk'] ?? 'low',
-      recommendations: (jsonDecode(json['recommendations']) as List<dynamic>?) // Decode JSON string
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
+      recommendations: parseRecommendations(json['recommendations']), // Safe parsing
       summary: json['summary'] ?? '',
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'assessment_id': assessmentId,
-      'assessment': assessment?.toJson(),
-      'stress_score': stressScore,
-      'motivation_score': motivationScore,
-      'satisfaction_score': satisfactionScore,
-      'global_score': globalScore,
-      'risk': risk,
-      'recommendations': recommendations,
-      'summary': summary,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-    };
-  }
+  
 }

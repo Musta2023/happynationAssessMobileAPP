@@ -7,6 +7,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:mobile_app/utils/pdf_exporter.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:share_plus/share_plus.dart';
 
 class AdminAssessmentAnalyticsPage extends ConsumerWidget {
@@ -40,7 +41,9 @@ class AdminAssessmentAnalyticsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Assessment Analytics'),
+        automaticallyImplyLeading: false,
         actions: [
+          const BackAndHomeButtons(),
           IconButton(
             icon: const Icon(Icons.image),
             onPressed: () => _exportAsImage(context),

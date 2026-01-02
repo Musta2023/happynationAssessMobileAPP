@@ -16,6 +16,7 @@ class ResponseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'assessment_id' => 'nullable|exists:assessments,id',
             'answers' => 'required|array',
             'answers.*.question_id' => 'required|exists:questions,id',
             'answers.*.answer_value' => 'required',
@@ -31,7 +32,7 @@ class ResponseController extends Controller
             if ($user->role !== 'employee') {
                 return response()->json(['error' => 'Unauthorized', 'message' => 'Only employees can submit responses.'], 403);
             }
-            $response = $user->responses()->create([]);
+            $response = $user->responses()->create(['assessment_id' => $request->assessment_id]);
 
             $answers = [];
             foreach ($request->answers as $answerData) {

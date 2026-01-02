@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/controllers/employee_profile_controller.dart';
+import 'package:mobile_app/widgets/shared/back_and_home_buttons.dart';
 import 'package:mobile_app/models/admin_dashboard_models.dart';
 import 'package:mobile_app/widgets/admin/response_list_item.dart';
 import 'package:mobile_app/widgets/shared/no_data_found_widget.dart';
@@ -52,15 +53,13 @@ class _EmployeeProfilePageState extends ConsumerState<EmployeeProfilePage> {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 1,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textMain),
-        onPressed: () => Navigator.pop(context),
-      ),
+      automaticallyImplyLeading: false,
       title: const Text(
         'Employee Profile',
         style: TextStyle(color: AppColors.textMain, fontWeight: FontWeight.bold, fontSize: 18),
       ),
       actions: [
+        const BackAndHomeButtons(),
         IconButton(
           onPressed: () {}, // Optional: Export or Edit actions
           icon: const Icon(Icons.more_horiz, color: AppColors.textSubtle),
