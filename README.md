@@ -20,7 +20,7 @@ This is a full-stack application for an employee well-being diagnostic system, b
 *   fl_chart
 
 **AI:**
-*   OpenAI Chat Completions API
+*   Google Gemini API
 
 ## System Roles
 
@@ -103,6 +103,38 @@ This is a full-stack application for an employee well-being diagnostic system, b
     ```
     The backend will typically run on `http://127.0.0.1:8000`.
 
+#### 9. Deployment on Platforms like Railway (Important for Production)
+
+When deploying to platforms like Railway, Heroku, Render, etc., you should set your `APP_KEY` and Laravel Passport encryption keys as environment variables directly on the platform rather than relying on the server to generate them during deployment. This prevents issues with console commands (like `--show-key` errors) and ensures keys are persistent and secure.
+
+**Steps:**
+
+1.  **Generate Application Key (`APP_KEY`) Locally:**
+    Navigate to your `backend` directory locally and run:
+    ```bash
+    php artisan key:generate --show
+    ```
+    Copy the entire output (e.g., `base64:YourAppKeyString...`).
+
+2.  **Generate Laravel Passport Keys Locally:**
+    Still in your `backend` directory, run:
+    ```bash
+    php artisan passport:keys --force
+    ```
+    This will generate `oauth-private.key` and `oauth-public.key` in your `backend/storage/` directory.
+
+3.  **Retrieve Passport Key Contents:**
+    Open the generated `oauth-private.key` and `oauth-public.key` files in a text editor. Copy their entire contents, including the `-----BEGIN...` and `-----END...` headers/footers.
+
+4.  **Set Environment Variables on Railway (or your chosen platform):**
+    Go to your project's dashboard on Railway (or similar platform), navigate to the "Variables" or "Environment Variables" section for your backend service, and add the following:
+    *   **`APP_KEY`**: Paste the output from `php artisan key:generate --show`.
+    *   **`PASSPORT_PRIVATE_KEY`**: Paste the entire content of `oauth-private.key`.
+    *   **`PASSPORT_PUBLIC_KEY`**: Paste the entire content of `oauth-public.key`.
+
+    *Note: By manually setting these, you ensure the platform doesn't try to run `key:generate` or `passport:keys` during deployment, which can sometimes cause errors if the deployment environment uses outdated command options.*
+
+
 ### 2. Mobile App (Flutter 3.x)
 
 #### Prerequisites
@@ -139,9 +171,11 @@ This is a full-stack application for an employee well-being diagnostic system, b
 ### Employee Flow
 1.  **Register:** Create a new employee account from the mobile app's login screen.
 2.  **Login:** Log in with your registered employee credentials.
-3.  **Assessment:** Start a new well-being assessment, answer the questions, and submit.
-4.  **Results:** View the AI-powered analysis, including scores, risk level, summary, and recommendations.
-5.  **History:** Review past assessments.
+3.  **Assessments:** View available assessments. Assessments you have already completed will be marked as "Answered" and cannot be resubmitted. Open assessments will be marked "Open".
+4.  **Take Assessment:** Start an open well-being assessment, answer the questions, and submit.
+5.  **Results:** View the AI-powered analysis, including scores, risk level, summary, and recommendations.
+6.  **Navigation:** Use the "Back" and "Home" buttons in the app bar to easily navigate through the application.
+7.  **History:** Review your past assessments, with correct assessment titles displayed.
 
 ### Admin Flow
 1.  **Login:** From the mobile app's login screen, select "Admin Login" and use the default admin credentials:
@@ -152,4 +186,4 @@ This is a full-stack application for an employee well-being diagnostic system, b
 4.  **View Responses:** Browse all employee responses and their detailed AI analyses.
 
 ---
-**Note:** Remember to replace `your_openai_api_key_here` in the `.env` file of your Laravel backend with your actual OpenAI API key.
+**Note:** Remember to replace `your_google_api_key_here` in the `.env` file of your Laravel backend with your actual Google API key.
