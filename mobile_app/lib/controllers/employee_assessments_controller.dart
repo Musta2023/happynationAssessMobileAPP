@@ -30,7 +30,7 @@ class EmployeeAssessmentsController extends GetxController {
       
       // 3. Mark assessments as answered if their ID exists in history
       for (var assessment in assessmentsList) {
-        bool alreadyDone = historyList.any((response) => response['assessment_id'] == assessment.id);
+        bool alreadyDone = historyList.any((response) => response['assessment_id']?.toString() == assessment.id);
         assessment.isAnswered = alreadyDone;
       }
 
