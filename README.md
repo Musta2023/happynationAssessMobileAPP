@@ -1,23 +1,27 @@
 # Employee Well-being Diagnostic System
 
-This is a full-stack application for an employee well-being diagnostic system, built with Laravel 11 for the backend and Flutter 3.x for the mobile application. It integrates with the OpenAI Chat Completions API for AI-powered analysis of employee responses.
+This is a full-stack application for an employee well-being diagnostic system, built with Laravel 11 for the backend and Flutter 3.x for the mobile application. It integrates with the Google Gemini API for AI-powered analysis of employee responses.
+
+For a comprehensive technical overview, including detailed architecture, API endpoints, database schema, and in-depth setup/deployment instructions, please refer to the [TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md).
 
 ## Technology Stack
 
 **Backend:**
 *   Laravel 11
 *   PHP 8.2+
-*   MySQL (or SQLite for local development)
+*   SQL (MySQL/PostgreSQL)
 *   Laravel Passport (OAuth2)
 *   RESTful API
 
 **Mobile App:**
 *   Flutter 3.x
-*   GetX (state management)
+*   GetX (state management, routing, dependency injection)
+*   Riverpod (state management)
 *   Dio (HTTP client)
 *   flutter_secure_storage
 *   intl
 *   fl_chart
+*   pdf, printing, share_plus, screenshot (for reports & sharing)
 
 **AI:**
 *   Google Gemini API
@@ -35,25 +39,16 @@ This is a full-stack application for an employee well-being diagnostic system, b
 *   Manage questions (add, edit, delete, activate/deactivate)
 *   View all employee responses
 *   View analytics dashboard
+*   Manage users and assessments
 *   Monitor employee risk levels
 
 ## Setup and Installation
 
+### Prerequisites
+
+Please refer to the [TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md#prerequisites) for a complete list of prerequisites, including specific software versions.
+
 ### 1. Backend (Laravel 11)
-
-#### Prerequisites
-*   PHP 8.2+
-*   Composer
-*   MySQL or SQLite (for local development)
-*   OpenSSL PHP Extension
-*   PDO PHP Extension
-*   Mbstring PHP Extension
-*   Tokenizer PHP Extension
-*   XML PHP Extension
-*   Ctype PHP Extension
-*   JSON PHP Extension
-
-#### Steps
 
 1.  **Navigate to the `backend` directory:**
     ```bash
@@ -69,7 +64,7 @@ This is a full-stack application for an employee well-being diagnostic system, b
     ```bash
     cp .env.example .env
     # For Windows
-    copy .env.example .env
+    # copy .env.example .env
     ```
 
 4.  **Generate application key:**
@@ -78,24 +73,25 @@ This is a full-stack application for an employee well-being diagnostic system, b
     ```
 
 5.  **Configure `.env` file:**
-    *   Set `DB_CONNECTION` to `mysql` or `sqlite`. If using SQLite, create an empty `database.sqlite` file in the `database` directory.
-    *   `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` for MySQL.
-    *   Set your OpenAI API Key:
+    *   Set `DB_CONNECTION` to `mysql` or `pgsql`.
+    *   Configure `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
+    *   Set your Google API Key for AI features:
         ```
-        OPENAI_API_KEY=your_openai_api_key_here
+        GOOGLE_API_KEY=your_google_api_key_here
         ```
+    *   For detailed instructions on `APP_KEY` and Laravel Passport keys for deployment, refer to the [TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md#backend-deployment-steps).
 
 6.  **Install Laravel Passport:**
     ```bash
-    php artisan passport:install --force
+    php artisan passport:install
     ```
     This will create the necessary encryption keys and client IDs/secrets.
 
 7.  **Run migrations and seed the database:**
     ```bash
-    php artisan migrate:refresh --seed
+    php artisan migrate --seed
     ```
-    This will create all tables and populate them with the default admin user (`admin@company.com`, password: `admin123`) and 10 sample questions.
+    This will create all tables and populate them with the default admin user (`admin@company.com`, password: `admin123`) and sample questions.
 
 8.  **Start the Laravel development server:**
     ```bash
@@ -103,45 +99,7 @@ This is a full-stack application for an employee well-being diagnostic system, b
     ```
     The backend will typically run on `http://127.0.0.1:8000`.
 
-#### 9. Deployment on Platforms like Railway (Important for Production)
-
-When deploying to platforms like Railway, Heroku, Render, etc., you should set your `APP_KEY` and Laravel Passport encryption keys as environment variables directly on the platform rather than relying on the server to generate them during deployment. This prevents issues with console commands (like `--show-key` errors) and ensures keys are persistent and secure.
-
-**Steps:**
-
-1.  **Generate Application Key (`APP_KEY`) Locally:**
-    Navigate to your `backend` directory locally and run:
-    ```bash
-    php artisan key:generate --show
-    ```
-    Copy the entire output (e.g., `base64:YourAppKeyString...`).
-
-2.  **Generate Laravel Passport Keys Locally:**
-    Still in your `backend` directory, run:
-    ```bash
-    php artisan passport:keys --force
-    ```
-    This will generate `oauth-private.key` and `oauth-public.key` in your `backend/storage/` directory.
-
-3.  **Retrieve Passport Key Contents:**
-    Open the generated `oauth-private.key` and `oauth-public.key` files in a text editor. Copy their entire contents, including the `-----BEGIN...` and `-----END...` headers/footers.
-
-4.  **Set Environment Variables on Railway (or your chosen platform):**
-    Go to your project's dashboard on Railway (or similar platform), navigate to the "Variables" or "Environment Variables" section for your backend service, and add the following:
-    *   **`APP_KEY`**: Paste the output from `php artisan key:generate --show`.
-    *   **`PASSPORT_PRIVATE_KEY`**: Paste the entire content of `oauth-private.key`.
-    *   **`PASSPORT_PUBLIC_KEY`**: Paste the entire content of `oauth-public.key`.
-
-    *Note: By manually setting these, you ensure the platform doesn't try to run `key:generate` or `passport:keys` during deployment, which can sometimes cause errors if the deployment environment uses outdated command options.*
-
-
 ### 2. Mobile App (Flutter 3.x)
-
-#### Prerequisites
-*   Flutter SDK (version 3.x) installed and configured.
-*   Android Studio / VS Code with Flutter and Dart plugins.
-
-#### Steps
 
 1.  **Navigate to the `mobile_app` directory:**
     ```bash
@@ -154,17 +112,17 @@ When deploying to platforms like Railway, Heroku, Render, etc., you should set y
     ```
 
 3.  **Configure API Base URL:**
-    *   Open `lib/api/api_endpoints.dart`.
-    *   Ensure `baseUrl` matches your Laravel backend's URL. For Android emulators, `http://10.0.2.2:8000/api` is common. For iOS simulators or physical devices, use your machine's local IP address (e.g., `http://192.168.1.X:8000/api`).
-        ```dart
-        static const String baseUrl = 'http://10.0.2.2:8000/api'; // Adjust as needed
-        ```
+    *   Open `lib/api/api_client.dart` (or `lib/api/api_endpoints.dart` if the file name was changed) and ensure `baseUrl` matches your Laravel backend's URL. For Android emulators, `http://10.0.2.2:8000/api` is common. For iOS simulators or physical devices, use your machine's local IP address (e.g., `http://192.168.1.X:8000/api`).
 
 4.  **Run the Flutter application:**
     ```bash
     flutter run
     ```
     Choose your preferred device (emulator or physical device).
+
+## Deployment
+
+For detailed deployment instructions for both the Laravel backend and Flutter mobile application, including production environment notes and platform-specific configurations, please refer to the [TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md#deployment).
 
 ## Usage
 
@@ -184,6 +142,7 @@ When deploying to platforms like Railway, Heroku, Render, etc., you should set y
 2.  **Dashboard:** View overall statistics, risk distribution, and category averages.
 3.  **Manage Questions:** Add, edit, delete, or activate/deactivate questions.
 4.  **View Responses:** Browse all employee responses and their detailed AI analyses.
+5.  **Manage Users & Assessments:** Access dedicated admin sections to manage users and assessments.
 
 ---
 **Note:** Remember to replace `your_google_api_key_here` in the `.env` file of your Laravel backend with your actual Google API key.
