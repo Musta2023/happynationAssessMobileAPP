@@ -4,6 +4,9 @@ This is a full-stack application for an employee well-being diagnostic system, b
 
 For a comprehensive technical overview, including detailed architecture, API endpoints, database schema, and in-depth setup/deployment instructions, please refer to the [TECHNICAL_DOCUMENTATION.md](TECHNICAL_DOCUMENTATION.md).
 
+# Link short video about the App: 
+ https://www.youtube.com/shorts/mrfwKIi5LCs
+
 ## Technology Stack
 
 **Backend:**
